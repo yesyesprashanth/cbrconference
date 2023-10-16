@@ -1,0 +1,12 @@
+.container{
+    max-width: 1000px;
+    min-height: 100vh;
+    background-color: #FFF;
+    margin: 0 auto;
+}
+
+@media (width < 600px) {
+    .container{
+        width: 100vw;   
+    }
+}
