@@ -1,28 +1,22 @@
-import mysql from 'mysql';
-import formidable from 'formidable';
 import * as paymentModel from '../models/payment.model.js';
 
-export const savePayment = (req,res) =>{    
-    const form = formidable({ multiples: true });
-    form.parse(req, (err, fields, files) => {
-        if(err) throw err;
-        
-        const data = {
-            emailid :fields.emailid,
-            uid: fields.uid,
-            receipt : files.receipt[0].filepath
-        }
-     
-       paymentModel.savePayment(data, (result)=>{
 
+export const savePayment = (req,res) =>{    
+    
+    const data = {
+        emailid :req.body.emailid,
+        uid: req.body.uid,
+        receipt : req.file.path
+    }
+     
+    paymentModel.savePayment(data, (result)=>{
         if(result==1)
             res.json("File Uploaded successfully");
         else if(result==2)
             res.json("Please register and then try to upload the file");
         else
             res.json("payment details already exists");            
-       });
-    })  
+    });
 }
 
 export const checkPayment = (req,res) =>{

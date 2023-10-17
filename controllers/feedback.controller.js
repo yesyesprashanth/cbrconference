@@ -1,7 +1,7 @@
 import * as feedbackModel  from '../models/feedback.model.js'
 
 export const saveFeedback =(req,res) =>{    
-   feedbackModel.saveFeedback(req.body, (daresultta)=>{
+   feedbackModel.saveFeedback(req.body, (result)=>{
         if(result==0)
             res.json("Failed to Save");
         else

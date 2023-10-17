@@ -1,4 +1,4 @@
-import mysql from 'mysql';
+import mysql from 'mysql2';
 import mysqlCon from '../configs/mysql.config.js';
 import fs from 'fs';
 

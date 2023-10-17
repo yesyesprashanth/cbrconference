@@ -1,5 +1,5 @@
 import mysqlCon from "../configs/mysql.config.js";
-import mysql from 'mysql';
+import mysql from 'mysql2';
 import fs from 'fs';
 
 
@@ -46,7 +46,7 @@ export const saveFullpaper = ({emailid, pgFile, fpFile}, callback) =>{
     fs.readFile(files[0], (err, fileData1)=>
         fs.readFile(files[1], (err, fileData2)=>{
            
-            checkAbstract(emailid, (isExist)=>{
+            checkAbstract(emailid, (isExist)=>{                
                 if(isExist==1){                                       
                     const queryData = [fileData1, fileData1, emailid]
                     const sql = mysql.format("UPDATE cbrconference.manuscript set plagiarismreport = ?, fullpaper = ? where emailid = ?",  queryData);
@@ -69,8 +69,3 @@ export const saveFullpaper = ({emailid, pgFile, fpFile}, callback) =>{
     
 }
 
-// const readFile = (filePath, callback) =>{
-//     fs.readFile(filePath, (err, fileData) = >{
-//         callback()
-//     })
-// }

@@ -1,9 +1,9 @@
 import mysqlCon from "../configs/mysql.config.js";
-import mysql from 'mysql';
+import mysql from 'mysql2';
 
 
-export const saveUser =({emailid, name, role, organisation}, callback) =>{    
-    const data = [emailid, name, role, organisation];
+export const saveUser =({name, role, organization, emailid}, callback) =>{        
+    const data = [emailid, name, role, organization];   
     const sql = mysql.format("INSERT INTO cbrconference.registration(emailid, name, role, organisation) VALUES(?,?,?,?)", data);        
 
     mysqlCon.query(sql, (err, result) =>{
@@ -12,7 +12,6 @@ export const saveUser =({emailid, name, role, organisation}, callback) =>{
                 callback(2);
             return;
         }  
-
         callback(1);
     })
 }

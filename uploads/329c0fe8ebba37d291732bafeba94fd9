@@ -1,0 +1,15 @@
+Advantages of an On premise server over cloud server
+
+1. We can create a n number of website end points.
+	Example: 1. research.domain.com
+	         2. Exam.domain.com
+		 3. library.domain.com
+2. Security: It almost equally secure to cloud because
+	1. It is a Linux server
+	2. All the security standards have been taken care
+	
+3. Data Control:The data is under our control
+4. Operation Cost: The operation cost is negligible compare to cloud.
+5. Customization: It is easier to customize the on-premise server
+6. Speed :  Compare to Cloud, On-premise servers are faster as the server is dedicated to only our application, where as low operation cost cloud servers are mostly shared servers.
+	

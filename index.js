@@ -1,6 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import mysqlCon from './configs/mysql.config.js';
+import cors from 'cors';
 dotenv.config();
 
 import feedbackRoute from './routes/feedback.route.js';
@@ -13,6 +13,15 @@ const port = process.env.port|3005;
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
+const corsOptions = {
+    origin: '*', //process.env.CORS_ORIGIN, 
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true, // To allow cookies and authentication headers
+  };
+  
+app.use(cors(corsOptions));
+
+app.use(express.static('uploads'));
 
 app.use('/feedback', feedbackRoute);
 app.use('/payment', paymentRoute);

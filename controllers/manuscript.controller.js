@@ -1,18 +1,13 @@
-import formidable from 'formidable';
 import * as manuscriptModel from '../models/manuscript.model.js'
 
 export const saveAbstract = (req,res) =>{
-    const form = formidable({multiples:true});
-    form.parse(req, (err, fields, files)=>{
-        if(err) throw err;
 
         const data = {
-            emailid: fields.emailid, 
-            abFile: files.abFile[0].filepath
+            emailid: req.body.emailid,
+            abFile: req.file.path
         }
 
         console.log(data);
-        // res.json("Abstract");
 
         manuscriptModel.saveAbstract(data, (result)=>{
             if(result==1)
@@ -22,18 +17,16 @@ export const saveAbstract = (req,res) =>{
             else 
                 res.json("Abstract file already exist");
         })
-    })
 }
 
 export const saveFullpaper = (req,res) =>{
-    
-    const form = formidable({multiples:true});
-    form.parse(req, (err, fields, files)=>{       
+            
         const data = {
-            emailid:fields.emailid,
-            pgFile: files.pgFile[0].filepath,
-            fpFile: files.fpFile[0].filepath
+            emailid:req.body.emailid,
+            pgFile: req.files.plagiarismReport[0].path,
+            fpFile: req.files.fullPaper[0].path
         }
+    
         manuscriptModel.saveFullpaper(data, (result)=>{
            if(result==1)
             res.json("Files uploaded successfully");
@@ -42,7 +35,7 @@ export const saveFullpaper = (req,res) =>{
            else if(result==3)
             res.json("Please upload abstract and upload the fullpaper");
         })         
-    })    
+
 }
 
 export const getAbstract = (req,res) =>{

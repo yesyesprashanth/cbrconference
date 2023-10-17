@@ -1,5 +1,5 @@
 import mysqlCon from '../configs/mysql.config.js';
-import mysql from 'mysql';
+import mysql from 'mysql2';
 
 
 export const saveFeedback = ({name, email, subject, message}, callback) =>{
