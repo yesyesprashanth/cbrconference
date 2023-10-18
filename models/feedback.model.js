@@ -2,10 +2,10 @@ import mysqlCon from '../configs/mysql.config.js';
 import mysql from 'mysql2';
 
 
-export const saveFeedback = ({name, email, subject, message}, callback) =>{
+export const saveFeedback = ({name, emailid, subject, message}, callback) =>{
     
         const sql= mysql.format("INSERT INTO cbrconference.feedback(emailid, name, subject, message) values(?,?,?,?)");
-        const data = [email, name, subject, message];
+        const data = [emailid, name, subject, message];
 
         mysqlCon.query(sql, data, (err, result)=>{
             if(err){                

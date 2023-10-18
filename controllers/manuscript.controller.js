@@ -4,7 +4,8 @@ export const saveAbstract = (req,res) =>{
 
         const data = {
             emailid: req.body.emailid,
-            abFile: req.file.path
+            abFile: req.file.path,
+            filname: req.file.originalname
         }
 
         console.log(data);
@@ -24,7 +25,9 @@ export const saveFullpaper = (req,res) =>{
         const data = {
             emailid:req.body.emailid,
             pgFile: req.files.plagiarismReport[0].path,
-            fpFile: req.files.fullPaper[0].path
+            file1:req.files.plagiarismReport[0],originalname,
+            fpFile: req.files.fullPaper[0].path,
+            file1:req.files.fullPaper[0],originalname,
         }
     
         manuscriptModel.saveFullpaper(data, (result)=>{
