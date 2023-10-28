@@ -3,8 +3,8 @@ import mysqlCon from '../configs/mysql.config.js';
 import fs from 'fs';
 
 export const savePayment = ({emailid, uid, receipt, filename}, callback) =>{               
-    let sql;
-    fs.readFile(receipt, (err, fileData) =>{
+    try{    
+        fs.readFile(receipt, (err, fileData) =>{
             if(err) throw err;
 
             const data = [emailid,uid,fileData, filename];
@@ -13,75 +13,91 @@ export const savePayment = ({emailid, uid, receipt, filename}, callback) =>{
             checkPayment(emailid, (isexist)=>{            
                 if(isexist==0)
                 {
-                    sql = mysql.format("INSERT INTO cbrconference.payment(emailid, uid, receipt, filename) VALUES(?,?,?, ?)",data);
+                    const sql = mysql.format("INSERT INTO cbrconference.payment(emailid, uid, receipt, filename) VALUES(?,?,?, ?)",data);
                     mysqlCon.query(sql, (err)=>{                        
+                        console.log(err);
                         if(err) 
                         {                
-                            if(err.errno==1452) //Foreign key err, user has to register and then upload
-                                callback(2);
+                            if(err.errno==1452) //Foreign key err, user has to register and then upload     
+                            {                           
+                                callback(3);
+                                return;
+                            }
+                           callback(err.message);                        
                         }
                         else
                         {                                
                             callback(1);
+                            return;
                         }
                     });                           
                 }else{
-                    callback(3);
+                    callback(2);
                 }
                 
             })
         });
+    }catch(err){
+        callback(err.message);
+    }
 }
 
 export const checkPayment = (emailid, callback) => {
    
+    try{
         const sql = mysql.format("SELECT EXISTS(SELECT * FROM cbrconference.payment WHERE emailid = ?) as count", emailid);        
         mysqlCon.query(sql, (err, result)=>{
-            if(err) throw err;
+            if(err) {
+                callback(err.message);
+                return;
+            }
 
             callback(result[0].count);
         });
+    }catch(err){
+        callback(err.message);
+    }
 
 }
 
 export const readReceipt = (emailid, callback) =>{
     
-        const query = 'SELECT receipt FROM cbrconference.payment WHERE emailid = ?';
-        const eamilid = "hello@gmail.com";
-      
-        mysqlCon.query(query, [eamilid], (error, results) => {
-          if (error) {
-            console.error(`Error retrieving BLOB data from the database: ${error}`);
-            return;
-          }
-      
-          if (results.length === 0) {
-            console.log('No data found for the specified emaildid.');
-            return;
-          }
-      
-          // Retrieve the BLOB data from the results
-          const blobData = results[0].receipt;
-
-        callback(blobData);
-    });    
+    try{
+            const query = 'SELECT receipt FROM cbrconference.payment WHERE emailid = ?';
+            const eamilid = emailid;
+        
+            mysqlCon.query(query, [eamilid], (err, results) => {
+                if (err) {
+                    callback(err.message);
+                    return;
+                }
+            
+                if (results.length === 0) {
+                    console.log('No data found for the specified emaildid.');
+                    return;
+                }
+            
+                // Retrieve the BLOB data from the results
+                const blobData = results[0].receipt;
+                callback(blobData);
+            });  
+    }catch(err){
+        callback(err.message);
+    }
 }
 
-export function getPaymentList(callback) {    
+export function getPaymentList(callback) {        
     try {       
-      const sql = 'SELECT emailid, uid, receipt FROM cbrconference.payment';
+      const sql = 'SELECT emailid, uid, filename FROM cbrconference.payment';
         mysqlCon.query(sql, (err, result)=>{
             if(err) {
-                callback("error reading the list");
+                callback(err.message);
                 return;
             }
-
-            // callback(result);
-            console.log(result)
+           
             callback(result);
         });      
-    } catch (error) {
-      console.log("Model Error");
-      throw error;
+    } catch (err) {      
+      callback(err.message);
     } 
 }

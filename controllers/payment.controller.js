@@ -2,8 +2,8 @@ import * as paymentModel from '../models/payment.model.js';
 
 
 export const savePayment = (req,res) =>{    
+    res.setHeader('Access-Control-Allow-Origin', '*');
 
-    console.log(req.file);
     
     const data = {
         emailid :req.body.emailid,
@@ -11,18 +11,24 @@ export const savePayment = (req,res) =>{
         receipt : req.file.path,
         filename: req.file.originalname
     }
+
+   
      
     paymentModel.savePayment(data, (result)=>{
+        console.log(result);
         if(result==1)
-            res.json("File Uploaded successfully");
+            res.status(201).json("Payment details Uploaded successfully");
         else if(result==2)
+            res.json("Payment details already exists");            
+        else if(result==3)
             res.json("Please register and then try to upload the file");
-        else
-            res.json("payment details already exists");            
+        else 
+            res.status(400).json(result);                        
     });
 }
 
 export const checkPayment = (req,res) =>{
+    res.setHeader('Access-Control-Allow-Origin', '*');
     const emailid = req.body.emailid;    
     paymentModel.checkPayment(emailid, (result)=>{
         if(result==0)
@@ -33,22 +39,32 @@ export const checkPayment = (req,res) =>{
 }
 
 export const readReceipt = (req,res) =>{
-        const emailid = "santhosh@gmail.com";
-        paymentModel.readReceipt(emailid, (result)=>{
-        //     // Set the appropriate content type based on the file type (e.g., for a Word document)
-        // res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+        const emailid = "hemanth@gmail.com";   
+        paymentModel.readReceipt(emailid, (result)=>{              
+        res.send(result);
+    });    
+}
 
-        // // Set the content disposition header to prompt a download with the desired file name
-        // res.setHeader('Content-Disposition', `attachment; filename="downloaded-document.docx"`);
+export const downloadReceipt = (req,res) =>{
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    const emailid = req.query.emailid;   
+    paymentModel.readReceipt(emailid, (result)=>{        
+    res.send(result);
+});    
+}
 
-        // Send the blob data as the response
-        console.log(result);
+export const postReceipt = (req,res) =>{
+    res.setHeader('Access-Control-Allow-Origin', '*');
+        const emailid = req.body.body.emailid;    
+        paymentModel.readReceipt(emailid, (result)=>{      
         res.send(result);
     });    
 }
 
 // Controller function to get the payment list
 export const getPaymentList = (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
     try {
       paymentModel.getPaymentList((data)=>{
         res.status(200).json(data);

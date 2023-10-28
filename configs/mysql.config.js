@@ -6,7 +6,8 @@ const mysqlCon = mysql.createConnection({
     host: process.env.MYSQL_HOST,
     user: process.env.MYSQL_USER,
     password: process.env.MYSQL_PASSWORD,
-    port: process.env.MYSQL_PORT
+    port: process.env.MYSQL_PORT,
+    database: 'cbrconference'
 });
 
 mysqlCon.connect((err)=>{
@@ -33,18 +34,16 @@ mysqlCon.connect((err)=>{
     });
 
     //Payment (Email, UID, Payment Receipt)
-    sql = mysql.format("CREATE TABLE IF NOT EXISTS cbrconference.payment(emailid VARCHAR(80) NOT NULL, UID VARCHAR(50), receipt LONGBLOB, FOREIGN KEY(emailid) REFERENCES cbrconference.registration(emailid))");
+    sql = mysql.format("CREATE TABLE IF NOT EXISTS cbrconference.payment(emailid VARCHAR(80) NOT NULL, UID VARCHAR(50), receipt LONGBLOB, filename VARCHAR(50), FOREIGN KEY(emailid) REFERENCES cbrconference.registration(emailid))");
     mysqlCon.query(sql, (err)=>{
         if(err) throw err;
     });
 
     //Papers (Email, Abstract, Plagarism Report, FullReport)
-    sql = mysql.format("CREATE TABLE IF NOT EXISTS cbrconference.manuscript(emailid VARCHAR(80), abstractpaper LONGBLOB, plagiarismreport LONGBLOB, fullpaper LONGBLOB,  FOREIGN KEY(emailid) REFERENCES cbrconference.registration(emailid))");
+    sql = mysql.format("CREATE TABLE IF NOT EXISTS cbrconference.manuscript(emailid VARCHAR(80), abstractpaper LONGBLOB, abstractfilename VARCHAR(50), plagiarismreport LONGBLOB, plagarismfilename VARCHAR(50), fullpaper LONGBLOB, fullpapaerfilename VARCHAR(50),  FOREIGN KEY(emailid) REFERENCES cbrconference.registration(emailid))");
     mysqlCon.query(sql, (err)=>{
         if(err) throw err;
-    });
-
-    // mysqlCon.end();
+    });   
 });
 
 
