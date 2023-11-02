@@ -1,54 +1,37 @@
-import mysqlCon from "../configs/mysql.config.js";
+// import mysqlCon from "../configs/mysql.config.js";
 import mysql from 'mysql2';
+import { insertData, retreiveData, countData } from './model.util.js';
 
 
-export const saveUser =({name, role, organization, emailid}, callback) =>{        
+export const saveUser = async ({name, role, organization, emailid}, callback) =>{        
     try{
         const data = [emailid, name, role, organization];   
-        const sql = mysql.format("INSERT INTO cbrconference.registration(emailid, name, role, organisation) VALUES(?,?,?,?)", data);        
-    
-        mysqlCon.query(sql, (err, result) =>{
-            if(err) {            
-                if(err.errno===1062)
-                {
-                    callback(2);
-                    return;
-                }
-                callback(err.message);
-            }  
-            callback(1);
-        })
+        const sql = mysql.format("INSERT INTO cbrconference.registration(emailid, name, role, organisation) VALUES(?,?,?,?)", data);         
+        const executionCode = await insertData(sql);        
+        callback(executionCode);
+
     }catch(err){
+        console.log("error");
         callback(err.message);
     }
 }
 
-export const checkUserExist = (emailid, callback) =>{
-    try{
-        const sql = mysql.format("SELECT EXISTS(SELECT * FROM cbrconference.registration WHERE emailid = ?) as count", emailid);
-        mysqlCon.query(sql, (err,result)=>{
-            if(err) {
-                callback(err.message);
-                return;
-            }  
-    
-            callback(result[0].count==0);        
-        });
-    }catch(err){
+export const checkUserExist = async (emailid, callback) =>{
+    try{        
+        const sql = mysql.format("SELECT COUNT(*) as count FROM cbrconference.registration WHERE emailid = ?", emailid);
+       
+        const count = await countData(sql);        
+        callback(count);
+    }catch(err){              
         callback(err.message);
     }
 }
 
-export function getUsers(callback) {
+export async function getUsers(callback) {
     try {
-      
-        mysqlCon.query('SELECT emailid, name, role, organisation FROM cbrconference.registration', (err, userlist)=>{
-            if(err) {
-                callback(err.message);
-                return;
-            }            
-            callback(userlist);
-        });      
+        const sql = mysql.format('SEL emailid, name, role, organisation FROM cbrconference.registration')
+        const userList = await retreiveData(sql);
+        callback(userList);      
     } catch (err) {
         callback(err.message);
     }

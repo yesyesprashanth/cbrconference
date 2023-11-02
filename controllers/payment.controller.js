@@ -2,26 +2,23 @@ import * as paymentModel from '../models/payment.model.js';
 
 
 export const savePayment = (req,res) =>{    
-    res.setHeader('Access-Control-Allow-Origin', '*');
-
-    
+    // res.setHeader('Access-Control-Allow-Origin', '*');
+   
     const data = {
         emailid :req.body.emailid,
         uid: req.body.UID,
         receipt : req.file.path,
         filename: req.file.originalname
-    }
-
-   
+    }  
      
-    paymentModel.savePayment(data, (result)=>{
+    paymentModel.savePayment(data, (result)=>{   
         console.log(result);
+        if(result == 0)
+            res.json("Please register and then try to upload the file");         
         if(result==1)
             res.status(201).json("Payment details Uploaded successfully");
         else if(result==2)
             res.json("Payment details already exists");            
-        else if(result==3)
-            res.json("Please register and then try to upload the file");
         else 
             res.status(400).json(result);                        
     });

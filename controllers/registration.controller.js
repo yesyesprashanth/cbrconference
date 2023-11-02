@@ -38,4 +38,4 @@ export function getUserList(req, res) {
       console.error('Error fetching user data:', error);
       res.status(500).json({ error: 'An error occurred while fetching user data' });
     }
-  }
+}

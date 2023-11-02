@@ -35,34 +35,3 @@ app.get('/', (req,res)=>{
 });
 
 app.listen(port, ()=>console.log(`server is up at http://localhost:${port}`));
-
-// Handle graceful shutdown
-process.on('SIGINT', () => {
-  console.log('Received SIGINT. Closing server and database connection...');
-  server.close(() => {
-    // Close the database connection
-    mysqlCon.end((err) => {
-      if (err) {
-        console.error('Error closing the database connection:', err);
-      } else {
-        console.log('Database connection closed.');
-        process.exit(0);
-      }
-    });
-  });
-});
-
-// Handle uncaught exceptions
-process.on('uncaughtException', (err) => {
-  console.error('Uncaught Exception:', err);
-
-  // Close the database connection
-  mysqlCon.end((dbErr) => {
-    if (dbErr) {
-      console.error('Error closing the database connection:', dbErr);
-    } else {
-      console.log('Database connection closed.');
-      process.exit(1);
-    }
-  });
-});

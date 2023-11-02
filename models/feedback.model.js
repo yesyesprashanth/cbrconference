@@ -1,38 +1,39 @@
-import mysqlCon from '../configs/mysql.config.js';
 import mysql from 'mysql2';
+import { retreiveData, insertData } from './model.util.js';
 
 
-export const saveFeedback = ({name, emailid, subject, message}, callback) =>{
 
-        try{
-            const sql= mysql.format("INSERT INTO cbrconference.feedback(emailid, name, subject, message) values(?,?,?,?)");
-            const data = [emailid, name, subject, message];
-            
-            mysqlCon.query(sql, data, (err, result)=>{
-                if(err){                               
-                    callback(err.message);
-                    return;             
-                } 
-                
-                callback(result.length);                   
-            })  
-        }catch(err){
+export const saveFeedback = async ({name, emailid, subject, message}, callback) =>{
+
+        try{      
+            console.log(name, emailid, subject, message);
+            if(emailid!="" && name!="" && subject!="" && message!="")
+            {
+                const sql= mysql.format("INSERT INTO cbrconference.feedback(emailid, name, subject, message) values(?,?,?,?)");
+                const data = [emailid, name, subject, message];
+
+                const executionCode = await insertData(sql, data);                    
+                if(executionCode===1)            
+                    callback("Saved Successfull");
+            }else{
+                callback("Please fill all the details");
+            }
+        }catch(err){            
             callback(err.message);
         }
+
+        
 }
 
-export const getFeedbackList = (callback) =>{
-   
+export const getFeedbackList = async (callback) =>{
     try{
         const sql = mysql.format("SELECT * FROM cbrconference.feedback");        
-        mysqlCon.query(sql, (err, result)=>{
-            if(err) {
-                callback(err.message);
-                return;
-            }
-            callback(result);          
-        })
+       
+        const result = await retreiveData(sql);
+        callback(result);
+
     }catch(err){
+        console.log("feedback.model err", err.message);
         callback(err.message);
     }   
 }

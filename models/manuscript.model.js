@@ -1,5 +1,6 @@
 import mysqlCon from "../configs/mysql.config.js";
 import mysql from 'mysql2';
+import { retreiveData } from "./model.util.js";
 import fs from 'fs';
 
 
@@ -26,9 +27,11 @@ export const saveAbstract = ({emailid, abFile, filename}, callback) =>{
                                 callback(1); //registered successfully
                             }
                         }); 
+
+
                     }else{
                         callback(3) //Abstract already exists
-                    }
+                    }                  
                 });
             });
         }catch(err){
@@ -45,7 +48,7 @@ export const checkAbstract = (emailid, callback) =>{
                 return;
             }
 
-            callback(result[0].count);
+            callback(result[0].count);           
         });
     }catch(err){
         callback(err.message)
@@ -74,14 +77,12 @@ export const saveFullpaper = ({emailid, pgFile, file1, fpFile, file2}, callback)
 
                                callback(err.message)                               
                             }else{
-                                callback(1)
-                                return;
-                            }
+                                callback(1)                              
+                            }                          
                         })
                     }else{
-                        callback(2);
-                        return;
-                    }                
+                        callback(2);                        
+                    }
                 })
             })
         })  
@@ -90,16 +91,20 @@ export const saveFullpaper = ({emailid, pgFile, file1, fpFile, file2}, callback)
     }
 }
 
-export function getMaunscriptList(callback){
+export async function getMaunscriptList(callback){
     try{    
         const sql = "select emailid, abstractfilename as filename1, plagarismfilename as filename2, fullpapaerfilename as filename3 from cbrconference.manuscript";
-        mysqlCon.query(sql, (err, result)=>{
-            if(err) {
-                callback(err.message);
-                return;
-            }
-            callback(result);         
-        });
+        // mysqlCon.query(sql, (err, result)=>{
+        //     if(err) {
+        //         callback(err.message);
+        //         return;
+        //     }
+        //     callback(result);                       
+        // });
+
+        const manuscriptlist = await retreiveData(sql);
+        callback(manuscriptlist);
+
     } catch (err) {
        callback(err.message);
   } 
@@ -114,6 +119,7 @@ export const getManuscriptBlob = (emailid, fieldname, callback) =>{
                 return;
             }
             callback(result[0].file);
+          
         });
     }catch (err) {
         callback(err.message);

@@ -44,6 +44,14 @@ mysqlCon.connect((err)=>{
     mysqlCon.query(sql, (err)=>{
         if(err) throw err;
     });   
+
+    mysqlCon.end((err) => {
+        if (err) {
+            console.log("Error closing the connection:", err);
+        } else {
+            console.log("Connection closed");
+        }
+    });
 });
 
 
