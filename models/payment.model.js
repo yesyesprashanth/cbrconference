@@ -1,5 +1,5 @@
 import mysql from 'mysql2';
-import { countData, retreiveData } from './model.util.js';
+import { countData, retreiveData , insertData} from './model.util.js';
 import mysqlCon from '../configs/mysql.config.js';
 import fs from 'fs';
 
@@ -7,36 +7,17 @@ export const savePayment = ({emailid, uid, receipt, filename}, callback) =>{
     try{    
         fs.readFile(receipt, (err, fileData) =>{
             if(err) throw err;
-
             const data = [emailid,uid,fileData, filename];
-
             //Check if the record exist
-            checkPayment(emailid, async (isexist)=>{            
+            checkPayment(emailid, async (isexist)=>{      
+               
                 if(isexist==0)
                 {
                     const sql = mysql.format("INSERT INTO cbrconference.payment(emailid, uid, receipt, filename) VALUES(?,?,?, ?)",data);
-                    // const executionCode = await insertData(sql); 
-                    // callback(executionCode);
-
-                    mysqlCon.query(sql, (err)=>{                        
-                        console.log(err);
-                        if(err) 
-                        {                
-                            if(err.errno==1452) //Foreign key err, user has to register and then upload     
-                            {                           
-                                callback(3);
-                                return;
-                            }
-                           callback(err.message);                        
-                        }
-                        else
-                        {                                
-                            callback(1);
-                            return;
-                        }                     
-                    });                           
+                    const executionCode = await insertData(sql); 
+                    callback(executionCode);                                     
                 }else{
-                    callback(0);
+                    callback(2);
                 }                
             })
         });
@@ -45,12 +26,12 @@ export const savePayment = ({emailid, uid, receipt, filename}, callback) =>{
     }
 }
 
-export const checkPayment = (emailid, callback) => {
+export const checkPayment = async (emailid, callback) => {
    
     try{
         const sql = mysql.format("SELECT EXISTS(SELECT * FROM cbrconference.payment WHERE emailid = ?) as count", emailid);        
-        const count = countData(sql);
-        callback(result[0].count);
+        const count = await countData(sql);       
+        callback(count);
     }catch(err){
         callback(err.message);
     }
@@ -70,7 +51,7 @@ export const readReceipt = (emailid, callback) =>{
                 }
             
                 if (results.length === 0) {
-                    console.log('No data found for the specified emaildid.');
+                    console.log('No data found for the specified email id.');
                     return;
                 }
             
@@ -87,15 +68,7 @@ export async function getPaymentList(callback) {
     try {       
       const sql = 'SELECT emailid, uid, filename FROM cbrconference.payment';
       const paymentList = await retreiveData(sql);
-      callback(paymentList);
-        // mysqlCon.query(sql, (err, result)=>{
-        //     if(err) {
-        //         callback(err.message);
-        //         return;
-        //     }
-           
-        //     callback(result);         
-        // });      
+      callback(paymentList);       
     } catch (err) {      
       callback(err.message);
     } 

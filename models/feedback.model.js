@@ -9,12 +9,11 @@ export const saveFeedback = async ({name, emailid, subject, message}, callback) 
             console.log(name, emailid, subject, message);
             if(emailid!="" && name!="" && subject!="" && message!="")
             {
-                const sql= mysql.format("INSERT INTO cbrconference.feedback(emailid, name, subject, message) values(?,?,?,?)");
                 const data = [emailid, name, subject, message];
-
-                const executionCode = await insertData(sql, data);                    
-                if(executionCode===1)            
-                    callback("Saved Successfull");
+                const sql= mysql.format("INSERT INTO cbrconference.feedback(emailid, name, subject, message) values(?,?,?,?)", data);
+               
+                const executionCode = await insertData(sql);        
+                callback(executionCode);          
             }else{
                 callback("Please fill all the details");
             }
@@ -27,8 +26,7 @@ export const saveFeedback = async ({name, emailid, subject, message}, callback) 
 
 export const getFeedbackList = async (callback) =>{
     try{
-        const sql = mysql.format("SELECT * FROM cbrconference.feedback");        
-       
+        const sql = mysql.format("SELECT * FROM cbrconference.feedback");    
         const result = await retreiveData(sql);
         callback(result);
 

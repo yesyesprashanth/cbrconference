@@ -8,17 +8,15 @@ export const saveAbstract = (req,res) =>{
             abFile: req.file.path,
             filename: req.file.originalname
         }
-
-        console.log(data);
+       
         if(data.emailid!="" && data.abFile!="" && data.filename!="")
         {
-            manuscriptModel.saveAbstract(data, (result)=>{
-                console.log(result)
-                if(result==1)
-                    res.status(201).json("File uploaded successfully");
-                else if(result==2)
+            manuscriptModel.saveAbstract(data, (result)=>{                
+                if(result==0)
                     res.json("Please register and then try to upload the file")
-                else if(result==3)
+                else if(result==1)
+                    res.status(201).json("File uploaded successfully");                
+                else if(result==2)
                     res.json("Abstract file already exist");
                 else
                     res.json(result); //Error
@@ -36,19 +34,16 @@ export const saveFullpaper = (req,res) =>{
             fpFile: req.files.fullPaper[0].path,
             file2: req.files.fullPaper[0].originalname,
         }
-
-        console.log(data);
-    
+           
         if(data.emailid!="" && data.pgFile!="" && data.fpFile!="")
         {
-            manuscriptModel.saveFullpaper(data, (result)=>{
-                console.log(result);
+            manuscriptModel.saveFullpaper(data, (result)=>{               
+                if(result==0)
+                    res.json("Please register and then try to upload the file");
                 if(result==1)
                     res.json("Files uploaded successfully");            
                 else if(result==2)
-                    res.json("Please upload abstract and upload the fullpaper");
-                else if(result==3)
-                    res.json("Please register and then try to upload the file");
+                    res.json("Please upload abstract and upload the fullpaper");                
                 else 
                     res.status(404).json(result);
             })         

@@ -4,7 +4,7 @@ export const saveFeedback =(req,res) =>{
    res.setHeader('Access-Control-Allow-Origin', '*');   
    feedbackModel.saveFeedback(req.body, (result)=>{       
         if(result>0)
-            res.status(201).json(result);
+            res.status(201).json("Saved Successfull");
         else
             res.json(result);        
     });    

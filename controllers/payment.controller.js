@@ -11,8 +11,7 @@ export const savePayment = (req,res) =>{
         filename: req.file.originalname
     }  
      
-    paymentModel.savePayment(data, (result)=>{   
-        console.log(result);
+    paymentModel.savePayment(data, (result)=>{           
         if(result == 0)
             res.json("Please register and then try to upload the file");         
         if(result==1)
@@ -63,7 +62,7 @@ export const postReceipt = (req,res) =>{
 export const getPaymentList = (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     try {
-      paymentModel.getPaymentList((data)=>{
+        paymentModel.getPaymentList((data)=>{
         res.status(200).json(data);
       });      
     } catch (error) {        

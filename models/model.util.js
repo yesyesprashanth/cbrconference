@@ -13,9 +13,10 @@ const openConnection = () =>{
         if (err) {
             console.error('Error connecting to MySQL:', err);
             process.exit(1); // Exit the application on connection error
-        } else {
-            console.log('Database Connected');
         }
+        // } else {
+        //     console.log('Database Connected');
+        // }
     });
 
     return mysqlCon;
@@ -39,19 +40,21 @@ export const retreiveData = async (sql) => {
 
 // Function to insert data
 export const insertData = async (sql) => {
+    
     const mysqlCon = openConnection();
     try {
         const [result] = await mysqlCon.promise().execute(sql);
         closeConnection(mysqlCon);
-        return 1;
+        return 1; //Successfull saved
     } catch (error) {        
-        closeConnection(mysqlCon);       
-        if(error.errno==1062)
-            return 2; //Duplicate Entry
-        if(err.errno==1452) //Foreign key err, user has to register and then upload     
-            return 3;
-            
-        return 0;        
+        closeConnection(mysqlCon); 
+        if(error.errno===1452) //Foreign key err, user has to register and then upload     
+          return 0;
+       
+        if(error.errno===1062)       
+          return 2; //Duplicate Entry        
+
+        return 5;   // Other error 
     }
 }
 
@@ -72,9 +75,10 @@ const closeConnection = (mysqlCon) => {
     mysqlCon.end((err) => {
         if (err) {
             console.log('Error closing the connection:', err);
-        } else {
-            console.log('Connection closed');
         }
+        // } else {
+        //     console.log('Connection closed');
+        // }
     });
 }
 

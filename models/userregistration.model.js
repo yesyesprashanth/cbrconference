@@ -7,12 +7,10 @@ export const saveUser = async ({name, role, organization, emailid}, callback) =>
     try{
         const data = [emailid, name, role, organization];   
         const sql = mysql.format("INSERT INTO cbrconference.registration(emailid, name, role, organisation) VALUES(?,?,?,?)", data);         
-        const executionCode = await insertData(sql);        
-        callback(executionCode);
-
-    }catch(err){
-        console.log("error");
-        callback(err.message);
+        const executionCode = await insertData(sql);
+        callback(executionCode);      
+    }catch(error){       
+        callback(error);
     }
 }
 
@@ -29,7 +27,7 @@ export const checkUserExist = async (emailid, callback) =>{
 
 export async function getUsers(callback) {
     try {
-        const sql = mysql.format('SEL emailid, name, role, organisation FROM cbrconference.registration')
+        const sql = mysql.format('SELECT emailid, name, role, organisation FROM cbrconference.registration')
         const userList = await retreiveData(sql);
         callback(userList);      
     } catch (err) {
